@@ -1,5 +1,7 @@
-import React, {useState} from 'react';
+import React, { useContext } from 'react';
 import {Rating} from "../Rating/Rating";
+import {Button} from "../Button/Button";
+import {urlContext} from "../../context";
 import './MovieListCard.scss'
 
 export const movieExample = {
@@ -25,63 +27,45 @@ export const movieExample = {
 const CN = 'movie-card';
 
 export const MovieListCard = (props) => {
-    const {movie: {poster_path, original_title, overview, vote_average}, genre} = props;
+    const {movie: {id, backdrop_path, overview, title, vote_average}, genre} = props;
+    const urlProps = useContext(urlContext);
 
-    const [view, setView] = useState(true);
+    const onClickHandler = (id) => (e) => {
+        e.stopPropagation();
 
-    const changeViewHandler = () => {
-        setView(!view);
+        console.log(urlProps);
+        const { history } = urlProps;
+
+        history.push(`/movie/movie-id/${id}`);
     };
 
     return (
-        <div className={`${CN}`} onClick={changeViewHandler}>
-            {
-                view ?
-                    (<img className={`${CN} card-img-top`}
-                         src={`http://image.tmdb.org/t/p/w780/${poster_path}`}
-                         alt="movie img"
-                    />) :
-
-                    (<div className={`${CN} card`}>
-                        <div className={`card-body`}>
-                            <h4 className={`card-title`}>{original_title}</h4>
+        <div className={`${CN} card`}>
                             {
-                                genre.map(item => {
-                                    return (
-                                        <h6 key={item.id} className={`card-subtitle`}>{item.name}</h6>
-                                    )
-                                })
-                            }
-                            <p className={`text-justify`} style={{fontSize: '14px', marginTop: '10px'}}>{overview}</p>
-                        </div>
-                        <div className={`card-footer`}>
-                            <Rating rating={vote_average / 2}/>
-                        </div>
-                    </div>)
-            }
+                                backdrop_path && <img className={`card-img-top`}
+                                                      src={`http://image.tmdb.org/t/p/w500/${backdrop_path}`}
+                                                      alt="movie img"
+                                />}
+
+                            <div className={`card-body`}>
+                                <h4 className={`card-title`}>{title}</h4>
+                                {
+                                    genre.map(item => {
+                                        return (
+                                            <h6 key={item.id} className={`${CN} card-subtitle genre `}>{item.name}</h6>
+                                        )
+                                    })
+                                }
+                                <p className={`text-justify`} style={{fontSize: '12px'}}>{overview}</p>
+                            </div>
+                            <div className={`card-footer d-flex justify-content-between`}>
+                                <Rating rating={vote_average / 2}/>
+                                <Button
+                                    label='See more'
+                                    onClick={onClickHandler(id)}
+                                />
+                            </div>
         </div>
 
     )
-
-    // return (
-    //     <div className={`${CN}`}>
-    //         <div className={`${CN} card`}>
-    //             <img className={`card-img-top`} src={`http://image.tmdb.org/t/p/w780/${poster_path}`} alt="movie img"/>
-    //             <div className={`card-body`}>
-    //                 <h4 className={`card-title`}>{original_title}</h4>
-    //                 {
-    //                     genre.map(item => {
-    //                         return (
-    //                             <h6 key={item.id} className={`card-subtitle`}>{item.name}</h6>
-    //                         )
-    //                     })
-    //                 }
-    //                 <p className={`text-justify`} style={{fontSize: '14px'}}>{overview}</p>
-    //             </div>
-    //             <div className={`card-footer`}>
-    //                 <Rating rating={vote_average/2} />
-    //             </div>
-    //         </div>
-    //     </div>
-    // );
 };

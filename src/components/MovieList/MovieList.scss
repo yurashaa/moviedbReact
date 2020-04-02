@@ -1,5 +1,11 @@
 .movie-list {
+  border-right: 1px solid lightgray;
+  border-left: 1px solid lightgray;
+  width: 80%;
+  height: 3100px;
+  margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  align-items: center;
+  flex-direction: column;
 }
